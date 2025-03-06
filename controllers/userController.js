@@ -47,7 +47,7 @@ export const createUser = asyncHandler(async (req, res, next) => {
 
 // Login user
 export const loginUser = asyncHandler(async (req, res, next) => {
-  const { email, password } = req.body;
+  const { email, password , rememberMe } = req.body;
 
   const userExists = await User.findOne({ email });
   if (!userExists || !(await bcrypt.compare(password, userExists.password)))
@@ -61,7 +61,7 @@ export const loginUser = asyncHandler(async (req, res, next) => {
   res.cookie("refreshToken", refreshToken, {
     httpOnly: true,
     secure: process.env.NODE_ENV !== "development",
-    maxAge: 30 * 24 * 60 * 60 * 1000,
+    maxAge: rememberMe ? 30 * 24 * 60 * 60 * 1000 : 2 * 60 * 60 * 1000,
   });
 
   const { password: _, refreshToken: refresh, ...user } = userExists._doc;

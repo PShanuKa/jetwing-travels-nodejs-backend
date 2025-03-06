@@ -6,4 +6,3 @@ export const generateToken = async (id) => {
 
   return {accessToken, refreshToken};
 }
-
