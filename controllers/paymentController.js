@@ -1,4 +1,5 @@
-import Payment from "../models/paymentModel.js";
+import axios from "axios";
+// import Payment from "../models/paymentModel.js";
 import { responseTemplate, errorResponseTemplate } from "../utils/responseTemplate.js";
 import asyncHandler from "express-async-handler";
 
@@ -132,4 +133,55 @@ export const retryPayment = asyncHandler(async (req, res, next) => {
   await payment.save();
 
   return responseTemplate(res, 200, "Payment retry initiated successfully", payment);
+});
+
+
+
+export const captureContext = asyncHandler(async (req, res, next) => {
+  const { amount, currency } = req.body;
+
+  try {
+    // Define the headers as per the curl request
+    const headers = {
+      'Authorization': 'Bearer 6a1c969b375b30b3ba572ee252aa457a', // Replace with your actual API key
+      'Content-Type': 'application/json',
+      'Date': 'Tue, 10 Oct 2023 12:34:56 GMT', // Static date value from the curl request
+      'v-c-merchant-id': 'tashinisomarathnecompany', // Merchant ID from the curl request
+      'signature': 'ac0e6531185f472d9dbbfa8df8d2ab48accc5be3f2d04d8ab7d9570d0c262846a0145343e5b84fa8a6899554abed4226e4857f326bec484fb6903564895692a20f46026eaa5c4455b857a8a55fc5d37220e12fb9a819402282fc2cdb4c5d5b9bd47037bde3ad47c68d3cfe45c35d3d1090cc677781a24ce0b508107748c9c5ed' // Signature from the curl request
+    };
+
+    // Define the payload as per the curl request
+    const payload = {
+      targetOrigins: ["https://jetwing.duckdns.org/"], // Updated target origin
+      clientVersion: "0.23",
+      allowedCardNetworks: ["VISA", "MASTERCARD", "AMEX"],
+      allowedPaymentTypes: ["PANENTRY", "CLICKTOPAY", "GOOGLEPAY"],
+      country: "US",
+      locale: "en_US",
+      captureMandate: {
+        billingType: "FULL",
+        requestEmail: true,
+        requestPhone: true,
+        requestShipping: true,
+        shipToCountries: ["US", "GB"],
+        showAcceptedNetworkIcons: true
+      },
+      orderInformation: {
+        amountDetails: {
+          totalAmount: amount, 
+          currency: currency 
+        }
+      }
+    };
+
+  
+    const response = await axios.post('https://apitest.cybersource.com/up/v1/capture-contexts', payload, { headers })
+
+  
+    console.log(response);
+    res.json(response.data);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to generate capture context' });
+  }
 });

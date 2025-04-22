@@ -1,13 +1,15 @@
-// import express from "express";
-// import {
-//   createPayment,
-//   getAllPayments,
-//   getPaymentById,
-//   updatePayment,
-//   retryPayment,
-// } from "../controllers/paymentController.js";
+import express from "express";
 
-// const router = express.Router();
+import {
+  createPayment,
+  getAllPayments,
+  getPaymentById,
+  updatePayment,
+  retryPayment,
+captureContext,
+} from "../controllers/paymentController.js";
+
+const router = express.Router();
 
 // router.post("/", createPayment);
 
@@ -18,6 +20,11 @@
 // router.put("/:id", updatePayment);
 
 
+// router.post("/", createPayment);
+
+router.post("/capture-context", captureContext);
+
+
 // router.post("/:id/retry", retryPayment);
 
-// export default router;
+export default router;

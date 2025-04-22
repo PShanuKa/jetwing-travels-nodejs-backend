@@ -8,6 +8,8 @@ import invoiceRoutes from "./routes/invoiceRoute.js";
 import companyRoutes from "./routes/companyRoutes.js";
 import metaRoutes from "./routes/metaRoutes.js";
 import cors from "cors";
+import paymentRoutes from "./routes/paymentRoutes.js";
+
 
 dotenv.config();
 
@@ -32,6 +34,7 @@ app.use("/api/customers", customerRoutes);
 app.use("/api/invoices", invoiceRoutes);
 app.use("/api/companies", companyRoutes);
 app.use("/api/meta", metaRoutes);
+app.use("/api/payment", paymentRoutes);
 
 
 
